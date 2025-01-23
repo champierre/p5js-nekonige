@@ -1,4 +1,6 @@
 let showCat = false;
+let catX = 200; // 猫のX座標
+let catSpeed = 3; // 猫の移動速度
 
 function setup() {
     const canvas = createCanvas(400, 400);
@@ -15,20 +17,26 @@ function draw() {
     background(240);
     
     if (showCat) {
-        // 画面中央にピンク色の円を描画（猫の顔を表現）
-        fill(255, 182, 193); // ピンク色
+        // 猫の移動処理
+        catX += catSpeed;
+        if (catX > width - 50 || catX < 50) {
+            catSpeed = -catSpeed;
+        }
+
+        // 黄色の猫を描画
+        fill(255, 255, 0); // 黄色
         noStroke();
         // 顔
-        circle(width/2, height/2, 100);
+        circle(catX, height/2, 100);
         // 耳
-        triangle(width/2 - 50, height/2 - 25, width/2 - 30, height/2 - 50, width/2 - 10, height/2 - 25);
-        triangle(width/2 + 50, height/2 - 25, width/2 + 30, height/2 - 50, width/2 + 10, height/2 - 25);
+        triangle(catX - 50, height/2 - 25, catX - 30, height/2 - 50, catX - 10, height/2 - 25);
+        triangle(catX + 50, height/2 - 25, catX + 30, height/2 - 50, catX + 10, height/2 - 25);
         // 目
         fill(0);
-        circle(width/2 - 15, height/2 - 5, 10);
-        circle(width/2 + 15, height/2 - 5, 10);
+        circle(catX - 15, height/2 - 5, 10);
+        circle(catX + 15, height/2 - 5, 10);
         // 鼻
         fill(255, 105, 180);
-        circle(width/2, height/2 + 5, 6);
+        circle(catX, height/2 + 5, 6);
     }
 }
