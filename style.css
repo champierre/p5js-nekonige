@@ -1,23 +1,31 @@
-body {
+html, body {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
     background-color: #f0f0f0;
 }
 
-#main {
-    position: relative;
+.game-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    min-height: 100vh;
     gap: 20px;
 }
 
-#startButton {
-    padding: 10px 20px;
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    display: block;
+    border: 2px solid #333;
+}
+
+.start-button {
+    padding: 10px 30px;
     font-size: 18px;
     background-color: #4CAF50;
     color: white;
@@ -25,13 +33,13 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    z-index: 1;
 }
 
-#startButton:hover {
+.start-button:hover {
     background-color: #45a049;
 }
 
-canvas {
-    display: block;
+.start-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
