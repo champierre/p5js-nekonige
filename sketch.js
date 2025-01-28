@@ -112,7 +112,7 @@ function drawCat() {
     translate(cat.x, cat.y);
     
     // 猫の体
-    fill(255, 182, 193);
+    fill(255, 255, 0); // 黄色
     noStroke();
     circle(0, 0, cat.size);
     
@@ -128,6 +128,8 @@ function drawCat() {
     // 鼻
     fill(255, 105, 180);
     circle(0, 3, 3);
+    
+    pop();
 }
 
 function drawMouse() {
@@ -247,31 +249,6 @@ function updateCatPosition() {
     // 画面外に出ないように制限（ステージの枠内に収める）
     cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
     cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
-}
-
-function drawCat() {
-    push();
-    translate(cat.x, cat.y);
-    
-    // 猫の体
-    fill(255, 255, 0); // 黄色
-    noStroke();
-    circle(0, 0, cat.size);
-    
-    // 耳
-    triangle(-25, -12, -15, -25, -5, -12);
-    triangle(25, -12, 15, -25, 5, -12);
-    
-    // 目
-    fill(0);
-    circle(-7, -2, 5);
-    circle(7, -2, 5);
-    
-    // 鼻
-    fill(255, 105, 180);
-    circle(0, 3, 3);
-    
-    pop();
 }
 
 function checkCollision() {
