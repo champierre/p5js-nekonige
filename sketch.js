@@ -5,6 +5,13 @@ let cat = {
     speed: 3
 };
 
+let mouse = {
+    x: 100,
+    y: 100,
+    size: 40,
+    speed: 4
+};
+
 let gameStartTime = 0;
 let isGameOver = false;
 let score = 0;
@@ -31,10 +38,30 @@ function startGame() {
 function resetGame() {
     cat.x = width / 2;
     cat.y = height / 2;
+    mouse.x = width / 4;
+    mouse.y = height / 4;
     isGameStarted = false;
     isGameOver = false;
     score = 0;
     startButton.removeAttribute('disabled');
+}
+
+function keyPressed() {
+    if (!isGameStarted || isGameOver) return;
+    
+    if (keyCode === LEFT_ARROW) {
+        mouse.x -= mouse.speed;
+    } else if (keyCode === RIGHT_ARROW) {
+        mouse.x += mouse.speed;
+    } else if (keyCode === UP_ARROW) {
+        mouse.y -= mouse.speed;
+    } else if (keyCode === DOWN_ARROW) {
+        mouse.y += mouse.speed;
+    }
+    
+    // 画面外に出ないように制限
+    mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
+    mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
 }
 
 function draw() {
@@ -44,6 +71,7 @@ function draw() {
     if (!isGameStarted) {
         // ゲーム開始前の表示
         drawCat();
+        drawMouse();
         fill(0);
         textSize(24);
         textAlign(CENTER, CENTER);
@@ -53,6 +81,7 @@ function draw() {
         score = floor((millis() - gameStartTime) / 1000);
         updateCatPosition();
         drawCat();
+        drawMouse();
         checkCollision();
         displayScore();
     } else {
@@ -83,7 +112,7 @@ function drawCat() {
     translate(cat.x, cat.y);
     
     // 猫の体
-    fill(255, 182, 193);
+    fill(255, 255, 0); // 黄色
     noStroke();
     circle(0, 0, cat.size);
     
@@ -99,6 +128,45 @@ function drawCat() {
     // 鼻
     fill(255, 105, 180);
     circle(0, 3, 3);
+    
+    pop();
+}
+
+function drawMouse() {
+    push();
+    translate(mouse.x, mouse.y);
+    
+    // ネズミの体
+    fill(150); // グレー
+    noStroke();
+    circle(0, 0, mouse.size);
+    
+    // 耳
+    fill(200);
+    ellipse(-15, -15, 15, 15);
+    ellipse(15, -15, 15, 15);
+    
+    // 目
+    fill(0);
+    circle(-5, -5, 4);
+    circle(5, -5, 4);
+    
+    // 鼻
+    fill(255, 192, 203);
+    circle(0, 0, 5);
+    
+    // ヒゲ
+    stroke(100);
+    strokeWeight(1);
+    // 左側のヒゲ
+    line(-2, 0, -15, -5);
+    line(-2, 0, -15, 0);
+    line(-2, 0, -15, 5);
+    // 右側のヒゲ
+    line(2, 0, 15, -5);
+    line(2, 0, 15, 0);
+    line(2, 0, 15, 5);
+
     
     pop();
 }
@@ -167,13 +235,13 @@ function drawStage() {
 }
 
 function updateCatPosition() {
-    // マウスと猫の距離を計算
-    let dx = mouseX - cat.x;
-    let dy = mouseY - cat.y;
+    // ネズミと猫の距離を計算
+    let dx = mouse.x - cat.x;
+    let dy = mouse.y - cat.y;
     let distance = sqrt(dx * dx + dy * dy);
     
-    if (distance < 150) {  // マウスが近づいたら逃げる
-        // マウスの反対方向に移動
+    if (distance < 150) {  // ネズミが近づいたら逃げる
+        // ネズミの反対方向に移動
         cat.x -= (dx / distance) * cat.speed;
         cat.y -= (dy / distance) * cat.speed;
     }
@@ -183,34 +251,9 @@ function updateCatPosition() {
     cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
 
-function drawCat() {
-    push();
-    translate(cat.x, cat.y);
-    
-    // 猫の体
-    fill(255, 255, 0); // 黄色
-    noStroke();
-    circle(0, 0, cat.size);
-    
-    // 耳
-    triangle(-25, -12, -15, -25, -5, -12);
-    triangle(25, -12, 15, -25, 5, -12);
-    
-    // 目
-    fill(0);
-    circle(-7, -2, 5);
-    circle(7, -2, 5);
-    
-    // 鼻
-    fill(255, 105, 180);
-    circle(0, 3, 3);
-    
-    pop();
-}
-
 function checkCollision() {
-    let distance = dist(mouseX, mouseY, cat.x, cat.y);
-    if (distance < cat.size/2) {
+    let distance = dist(mouse.x, mouse.y, cat.x, cat.y);
+    if (distance < (cat.size + mouse.size) / 3) {
         isGameOver = true;
         if (score > bestScore) {
             bestScore = score;
