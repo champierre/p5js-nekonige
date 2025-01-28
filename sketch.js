@@ -39,6 +39,7 @@ function resetGame() {
 
 function draw() {
     background(240);
+    drawStage();
     
     if (!isGameStarted) {
         // ゲーム開始前の表示
@@ -60,6 +61,27 @@ function draw() {
     }
 }
 
+function drawStage() {
+    // ステージの枠を描画
+    push();
+    strokeWeight(4);
+    stroke(100);
+    noFill();
+    rect(10, 10, width - 20, height - 20);
+    
+    // 角の装飾
+    const cornerSize = 20;
+    // 左上
+    line(10, 30, 30, 10);
+    // 右上
+    line(width - 30, 10, width - 10, 30);
+    // 左下
+    line(10, height - 30, 30, height - 10);
+    // 右下
+    line(width - 30, height - 10, width - 10, height - 30);
+    pop();
+}
+
 function updateCatPosition() {
     // マウスと猫の距離を計算
     let dx = mouseX - cat.x;
@@ -72,9 +94,9 @@ function updateCatPosition() {
         cat.y -= (dy / distance) * cat.speed;
     }
     
-    // 画面外に出ないように制限
-    cat.x = constrain(cat.x, cat.size/2, width - cat.size/2);
-    cat.y = constrain(cat.y, cat.size/2, height - cat.size/2);
+    // 画面外に出ないように制限（ステージの枠内に収める）
+    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
 
 function drawCat() {
@@ -117,11 +139,13 @@ function displayScore() {
     fill(0);
     textSize(20);
     textAlign(LEFT, TOP);
-    text('時間: ' + score + '秒', 10, 10);
+    text('時間: ' + score + '秒', 30, 30);
 }
 
 function displayGameOver() {
-    background(240, 240, 240, 200);
+    push();
+    fill(240, 240, 240, 200);
+    rect(0, 0, width, height);
     
     fill(0);
     textSize(32);
@@ -133,4 +157,5 @@ function displayGameOver() {
     
     textSize(16);
     text('スタートボタンでリスタート', width/2, height/2 + 70);
+    pop();
 }
