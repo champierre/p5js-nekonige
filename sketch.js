@@ -39,6 +39,7 @@ function resetGame() {
 
 function draw() {
     background(240);
+    drawStage();
     
     if (!isGameStarted) {
         // ゲーム開始前の表示
@@ -142,4 +143,103 @@ function mousePressed() {
             resetGame();
         }
     }
+}
+
+function drawStage() {
+    // ステージの枠を描画
+    push();
+    strokeWeight(4);
+    stroke(100);
+    noFill();
+    rect(10, 10, width - 20, height - 20);
+    
+    // 角の装飾
+    const cornerSize = 20;
+    // 左上
+    line(10, 30, 30, 10);
+    // 右上
+    line(width - 30, 10, width - 10, 30);
+    // 左下
+    line(10, height - 30, 30, height - 10);
+    // 右下
+    line(width - 30, height - 10, width - 10, height - 30);
+    pop();
+}
+
+function updateCatPosition() {
+    // マウスと猫の距離を計算
+    let dx = mouseX - cat.x;
+    let dy = mouseY - cat.y;
+    let distance = sqrt(dx * dx + dy * dy);
+    
+    if (distance < 150) {  // マウスが近づいたら逃げる
+        // マウスの反対方向に移動
+        cat.x -= (dx / distance) * cat.speed;
+        cat.y -= (dy / distance) * cat.speed;
+    }
+    
+    // 画面外に出ないように制限（ステージの枠内に収める）
+    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
+}
+
+function drawCat() {
+    push();
+    translate(cat.x, cat.y);
+    
+    // 猫の体
+    fill(255, 255, 0); // 黄色
+    noStroke();
+    circle(0, 0, cat.size);
+    
+    // 耳
+    triangle(-25, -12, -15, -25, -5, -12);
+    triangle(25, -12, 15, -25, 5, -12);
+    
+    // 目
+    fill(0);
+    circle(-7, -2, 5);
+    circle(7, -2, 5);
+    
+    // 鼻
+    fill(255, 105, 180);
+    circle(0, 3, 3);
+    
+    pop();
+}
+
+function checkCollision() {
+    let distance = dist(mouseX, mouseY, cat.x, cat.y);
+    if (distance < cat.size/2) {
+        isGameOver = true;
+        if (score > bestScore) {
+            bestScore = score;
+        }
+        startButton.removeAttribute('disabled');
+    }
+}
+
+function displayScore() {
+    fill(0);
+    textSize(20);
+    textAlign(LEFT, TOP);
+    text('時間: ' + score + '秒', 30, 30);
+}
+
+function displayGameOver() {
+    push();
+    fill(240, 240, 240, 200);
+    rect(0, 0, width, height);
+    
+    fill(0);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text('ゲームオーバー!', width/2, height/2 - 40);
+    textSize(24);
+    text('スコア: ' + score + '秒', width/2, height/2);
+    text('ベストスコア: ' + bestScore + '秒', width/2, height/2 + 30);
+    
+    textSize(16);
+    text('スタートボタンでリスタート', width/2, height/2 + 70);
+    pop();
 }
