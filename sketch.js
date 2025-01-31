@@ -388,6 +388,7 @@ function checkCollision() {
         let distance = dist(mouse.x, mouse.y, cat.x, cat.y);
         if (distance < (cat.size + mouse.size) / 3) {
             isGameOver = true;
+            gameState = 'gameover';
             if (score > bestScore) {
                 bestScore = score;
             }
