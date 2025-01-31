@@ -32,6 +32,7 @@ function setup() {
 }
 
 function startGame() {
+    resetGame();
     isGameStarted = true;
     gameStartTime = millis();
     startButton.attribute('disabled', '');
