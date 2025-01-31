@@ -1,11 +1,29 @@
-let cat = {
-    x: 200,
-    y: 200,
-    size: 50,
-    speed: 2,
-    isMoving: false,
-    animationFrame: 0
-};
+let cats = [
+    {
+        x: 200,
+        y: 200,
+        size: 50,
+        speed: 2,
+        isMoving: false,
+        animationFrame: 0
+    },
+    {
+        x: 300,
+        y: 200,
+        size: 50,
+        speed: 2,
+        isMoving: false,
+        animationFrame: 0
+    },
+    {
+        x: 100,
+        y: 200,
+        size: 50,
+        speed: 2,
+        isMoving: false,
+        animationFrame: 0
+    }
+];
 
 let mouse = {
     x: 100,
@@ -48,19 +66,27 @@ function startGame() {
     startButton.attribute('disabled', '');
     
     // ネコとネズミの位置をランダムに設定
-    cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
-    cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+    for (let cat of cats) {
+        cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
+        cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+    }
     
     // ネズミの位置をネコから離れた位置に設定
     do {
         mouse.x = random(30 + mouse.size/2, width - 30 - mouse.size/2);
         mouse.y = random(30 + mouse.size/2, height - 30 - mouse.size/2);
-    } while (dist(cat.x, cat.y, mouse.x, mouse.y) < 150); // 最低150ピクセル離す
+    } while (cats.some(cat => dist(cat.x, cat.y, mouse.x, mouse.y) < 150)); // 全てのネコから最低150ピクセル離す
 }
 
 function resetGame() {
-    cat.x = width / 2;
-    cat.y = height / 2;
+    // ネコの初期位置を設定
+    cats[0].x = width / 2;
+    cats[0].y = height / 2;
+    cats[1].x = width * 3 / 4;
+    cats[1].y = height / 2;
+    cats[2].x = width / 4;
+    cats[2].y = height / 2;
+    
     mouse.x = width / 4;
     mouse.y = height / 4;
     isGameStarted = false;
@@ -75,13 +101,17 @@ function draw() {
     
     // アニメーションフレームの更新
     if (frameCount % 10 === 0) {  // 10フレームごとに更新
-        if (cat.isMoving) cat.animationFrame = (cat.animationFrame + 1) % 2;
+        for (let cat of cats) {
+            if (cat.isMoving) cat.animationFrame = (cat.animationFrame + 1) % 2;
+        }
         if (mouse.isMoving) mouse.animationFrame = (mouse.animationFrame + 1) % 2;
     }
     
     if (!isGameStarted) {
         // ゲーム開始前の表示
-        drawCat();
+        for (let cat of cats) {
+            drawCat(cat);
+        }
         drawMouse();
         fill(0);
         textSize(24);
@@ -118,8 +148,11 @@ function draw() {
             mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
         }
         
-        updateCatPosition();
-        drawCat();
+        // 全てのネコの位置を更新して描画
+        for (let cat of cats) {
+            updateCatPosition(cat);
+            drawCat(cat);
+        }
         drawMouse();
         checkCollision();
         displayScore();
@@ -129,7 +162,7 @@ function draw() {
     }
 }
 
-function drawCat() {
+function drawCat(cat) {
     push();
     translate(cat.x, cat.y);
     
@@ -274,7 +307,7 @@ function drawMouse() {
     pop();
 }
 
-function updateCatPosition() {
+function updateCatPosition(cat) {
     // ネズミと猫の距離を計算
     let dx = mouse.x - cat.x;
     let dy = mouse.y - cat.y;
@@ -293,13 +326,17 @@ function updateCatPosition() {
 }
 
 function checkCollision() {
-    let distance = dist(mouse.x, mouse.y, cat.x, cat.y);
-    if (distance < (cat.size + mouse.size) / 3) {
-        isGameOver = true;
-        if (score > bestScore) {
-            bestScore = score;
+    // いずれかのネコとネズミが接触したらゲームオーバー
+    for (let cat of cats) {
+        let distance = dist(mouse.x, mouse.y, cat.x, cat.y);
+        if (distance < (cat.size + mouse.size) / 3) {
+            isGameOver = true;
+            if (score > bestScore) {
+                bestScore = score;
+            }
+            startButton.removeAttribute('disabled');
+            return;
         }
-        startButton.removeAttribute('disabled');
     }
 }
 
