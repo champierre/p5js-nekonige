@@ -84,7 +84,7 @@ function startGame() {
     resetGame();
     isGameStarted = true;
     gameStartTime = millis();
-    startButton.attribute('disabled', '');
+    startButton.addClass('hidden');
     
     // ネコとネズミの位置をランダムに設定
     for (let cat of cats) {
@@ -120,7 +120,7 @@ function resetGame() {
     isGameStarted = false;
     isGameOver = false;
     score = 0;
-    startButton.removeAttribute('disabled');
+    startButton.removeClass('hidden');
 }
 
 function draw() {
@@ -372,7 +372,7 @@ function checkCollision() {
             if (score > bestScore) {
                 bestScore = score;
             }
-            startButton.removeAttribute('disabled');
+            startButton.removeClass('hidden');
             return;
         }
     }
