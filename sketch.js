@@ -9,7 +9,8 @@ let mouse = {
     x: 100,
     y: 100,
     size: 40,
-    speed: 4
+    speed: 4,
+    isMoving: false
 };
 
 let gameStartTime = 0;
@@ -51,12 +52,16 @@ function keyPressed() {
     
     if (keyCode === LEFT_ARROW) {
         mouse.x -= mouse.speed;
+        mouse.isMoving = !mouse.isMoving;
     } else if (keyCode === RIGHT_ARROW) {
         mouse.x += mouse.speed;
+        mouse.isMoving = !mouse.isMoving;
     } else if (keyCode === UP_ARROW) {
         mouse.y -= mouse.speed;
+        mouse.isMoving = !mouse.isMoving;
     } else if (keyCode === DOWN_ARROW) {
         mouse.y += mouse.speed;
+        mouse.isMoving = !mouse.isMoving;
     }
     
     // 画面外に出ないように制限
@@ -143,13 +148,27 @@ function drawMouse() {
     
     // 耳
     fill(200);
-    ellipse(-15, -15, 15, 15);
-    ellipse(15, -15, 15, 15);
+    if (mouse.isMoving) {
+        // 動いているときは耳を少し後ろに倒す
+        ellipse(-15, -12, 15, 12);
+        ellipse(15, -12, 15, 12);
+    } else {
+        // 止まっているときは耳を立てる
+        ellipse(-15, -15, 15, 15);
+        ellipse(15, -15, 15, 15);
+    }
     
     // 目
     fill(0);
-    circle(-5, -5, 4);
-    circle(5, -5, 4);
+    if (mouse.isMoving) {
+        // 動いているときは目を細める
+        ellipse(-5, -5, 4, 2);
+        ellipse(5, -5, 4, 2);
+    } else {
+        // 止まっているときは丸い目
+        circle(-5, -5, 4);
+        circle(5, -5, 4);
+    }
     
     // 鼻
     fill(255, 192, 203);
@@ -158,15 +177,23 @@ function drawMouse() {
     // ヒゲ
     stroke(100);
     strokeWeight(1);
-    // 左側のヒゲ
-    line(-2, 0, -15, -5);
-    line(-2, 0, -15, 0);
-    line(-2, 0, -15, 5);
-    // 右側のヒゲ
-    line(2, 0, 15, -5);
-    line(2, 0, 15, 0);
-    line(2, 0, 15, 5);
-
+    if (mouse.isMoving) {
+        // 動いているときはヒゲを後ろに流す
+        line(-2, 0, -15, -3);
+        line(-2, 0, -15, 2);
+        line(-2, 0, -15, 7);
+        line(2, 0, 15, -3);
+        line(2, 0, 15, 2);
+        line(2, 0, 15, 7);
+    } else {
+        // 止まっているときは通常のヒゲ
+        line(-2, 0, -15, -5);
+        line(-2, 0, -15, 0);
+        line(-2, 0, -15, 5);
+        line(2, 0, 15, -5);
+        line(2, 0, 15, 0);
+        line(2, 0, 15, 5);
+    }
     
     pop();
 }
