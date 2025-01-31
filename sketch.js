@@ -2,7 +2,8 @@ let cat = {
     x: 200,
     y: 200,
     size: 50,
-    speed: 3
+    speed: 3,
+    isMoving: false
 };
 
 let mouse = {
@@ -96,20 +97,24 @@ function draw() {
 }
 
 function updateCatPosition() {
-    // マウスと猫の距離を計算
-    let dx = mouseX - cat.x;
-    let dy = mouseY - cat.y;
+    // ネズミと猫の距離を計算
+    let dx = mouse.x - cat.x;
+    let dy = mouse.y - cat.y;
     let distance = sqrt(dx * dx + dy * dy);
     
-    if (distance < 150) {  // マウスが近づいたら逃げる
-        // マウスの反対方向に移動
+    let wasMoving = cat.isMoving;
+    cat.isMoving = false;
+    
+    if (distance < 150) {  // ネズミが近づいたら逃げる
+        // ネズミの反対方向に移動
         cat.x -= (dx / distance) * cat.speed;
         cat.y -= (dy / distance) * cat.speed;
+        cat.isMoving = true;
     }
     
-    // 画面外に出ないように制限
-    cat.x = constrain(cat.x, cat.size/2, width - cat.size/2);
-    cat.y = constrain(cat.y, cat.size/2, height - cat.size/2);
+    // 画面外に出ないように制限(ステージの枠内に収める)
+    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
 
 function drawCat() {
@@ -122,17 +127,52 @@ function drawCat() {
     circle(0, 0, cat.size);
     
     // 耳
-    triangle(-25, -12, -15, -25, -5, -12);
-    triangle(25, -12, 15, -25, 5, -12);
+    if (cat.isMoving) {
+        // 動いているときは耳を後ろに倒す
+        triangle(-25, -10, -15, -20, -5, -10);
+        triangle(25, -10, 15, -20, 5, -10);
+    } else {
+        // 止まっているときは耳を立てる
+        triangle(-25, -12, -15, -25, -5, -12);
+        triangle(25, -12, 15, -25, 5, -12);
+    }
     
     // 目
     fill(0);
-    circle(-7, -2, 5);
-    circle(7, -2, 5);
+    if (cat.isMoving) {
+        // 動いているときは目を細める
+        ellipse(-7, -2, 5, 2);
+        ellipse(7, -2, 5, 2);
+    } else {
+        // 止まっているときは丸い目
+        circle(-7, -2, 5);
+        circle(7, -2, 5);
+    }
     
     // 鼻
     fill(255, 105, 180);
     circle(0, 3, 3);
+    
+    // ヒゲ(動きに応じて角度を変える)
+    stroke(100);
+    strokeWeight(1);
+    if (cat.isMoving) {
+        // 動いているときはヒゲを後ろに流す
+        line(-2, 3, -15, 6);
+        line(-2, 3, -15, 8);
+        line(-2, 3, -15, 10);
+        line(2, 3, 15, 6);
+        line(2, 3, 15, 8);
+        line(2, 3, 15, 10);
+    } else {
+        // 止まっているときは通常のヒゲ
+        line(-2, 3, -15, 0);
+        line(-2, 3, -15, 3);
+        line(-2, 3, -15, 6);
+        line(2, 3, 15, 0);
+        line(2, 3, 15, 3);
+        line(2, 3, 15, 6);
+    }
     
     pop();
 }
