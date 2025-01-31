@@ -41,6 +41,7 @@ let mouse = {
 };
 
 let gameStartTime = 0;
+let countdownStartTime = 0;
 let isGameOver = false;
 let score = 0;
 let bestScore = 0;
@@ -85,6 +86,7 @@ function startGame() {
     resetGame();
     startButton.addClass('hidden');
     gameState = 'countdown';
+    countdownStartTime = millis();
     
     // 2秒後にゲームを開始
     setTimeout(() => {
@@ -153,7 +155,8 @@ function draw() {
         textSize(64);
         textAlign(CENTER, CENTER);
         fill(0);
-        text('Ready...', width/2, height/2);
+        let remainingTime = 2 - floor((millis() - countdownStartTime) / 1000);
+        text(remainingTime, width/2, height/2);
         pop();
     } else if (gameState === 'title') {
         // ゲーム開始前の表示
