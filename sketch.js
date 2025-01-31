@@ -423,9 +423,6 @@ function displayGameOver() {
     textSize(24);
     text('スコア: ' + score + '秒', width/2, height/2);
     text('ベストスコア: ' + bestScore + '秒', width/2, height/2 + 30);
-    
-    textSize(16);
-    text('スタートボタンでリスタート', width/2, height/2 + 70);
     pop();
 }
 
