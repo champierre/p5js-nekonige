@@ -45,6 +45,7 @@ let isGameOver = false;
 let score = 0;
 let bestScore = 0;
 let isGameStarted = false;
+let gameState = 'title'; // 'title', 'countdown', 'playing', 'gameover'
 let startButton;
 let directionButtons = {
     up: null,
@@ -82,28 +83,34 @@ function setup() {
 
 function startGame() {
     resetGame();
-    isGameStarted = true;
-    gameStartTime = millis();
     startButton.addClass('hidden');
+    gameState = 'countdown';
     
-    // ネコとネズミの位置をランダムに設定
-    for (let cat of cats) {
-        cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
-        cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+    // 2秒後にゲームを開始
+    setTimeout(() => {
+        gameState = 'playing';
+        isGameStarted = true;
+        gameStartTime = millis();
         
-        // ランダムな方向を設定
-        if (cat.moveMode === 'random') {
-            const angle = random(TWO_PI);
-            cat.direction.x = cos(angle);
-            cat.direction.y = sin(angle);
+        // ネコとネズミの位置をランダムに設定
+        for (let cat of cats) {
+            cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
+            cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+            
+            // ランダムな方向を設定
+            if (cat.moveMode === 'random') {
+                const angle = random(TWO_PI);
+                cat.direction.x = cos(angle);
+                cat.direction.y = sin(angle);
+            }
         }
-    }
-    
-    // ネズミの位置をネコから離れた位置に設定
-    do {
-        mouse.x = random(30 + mouse.size/2, width - 30 - mouse.size/2);
-        mouse.y = random(30 + mouse.size/2, height - 30 - mouse.size/2);
-    } while (cats.some(cat => dist(cat.x, cat.y, mouse.x, mouse.y) < 150)); // 全てのネコから最低150ピクセル離す
+        
+        // ネズミの位置をネコから離れた位置に設定
+        do {
+            mouse.x = random(30 + mouse.size/2, width - 30 - mouse.size/2);
+            mouse.y = random(30 + mouse.size/2, height - 30 - mouse.size/2);
+        } while (cats.some(cat => dist(cat.x, cat.y, mouse.x, mouse.y) < 150)); // 全てのネコから最低150ピクセル離す
+    }, 2000);
 }
 
 function resetGame() {
@@ -135,13 +142,26 @@ function draw() {
         if (mouse.isMoving) mouse.animationFrame = (mouse.animationFrame + 1) % 2;
     }
     
-    if (!isGameStarted) {
+    if (gameState === 'countdown') {
+        // カウントダウン表示
+        for (let cat of cats) {
+            drawCat(cat);
+        }
+        drawMouse();
+        
+        push();
+        textSize(64);
+        textAlign(CENTER, CENTER);
+        fill(0);
+        text('Ready...', width/2, height/2);
+        pop();
+    } else if (gameState === 'title') {
         // ゲーム開始前の表示
         for (let cat of cats) {
             drawCat(cat);
         }
         drawMouse();
-    } else if (!isGameOver) {
+    } else if (gameState === 'playing' && !isGameOver) {
         // ゲーム中
         score = floor((millis() - gameStartTime) / 1000);
         
@@ -180,8 +200,7 @@ function draw() {
         drawMouse();
         checkCollision();
         displayScore();
-    } else {
-        // ゲームオーバー時
+    } else if (gameState === 'gameover') {
         displayGameOver();
     }
 }
