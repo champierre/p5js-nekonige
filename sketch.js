@@ -5,7 +5,9 @@ let cats = [
         size: 50,
         speed: 2,
         isMoving: false,
-        animationFrame: 0
+        animationFrame: 0,
+        moveMode: 'chase', // 'chase' or 'random'
+        direction: { x: 0, y: 0 }
     },
     {
         x: 300,
@@ -13,7 +15,9 @@ let cats = [
         size: 50,
         speed: 2,
         isMoving: false,
-        animationFrame: 0
+        animationFrame: 0,
+        moveMode: 'random',
+        direction: { x: 0, y: 0 }
     },
     {
         x: 100,
@@ -21,7 +25,9 @@ let cats = [
         size: 50,
         speed: 2,
         isMoving: false,
-        animationFrame: 0
+        animationFrame: 0,
+        moveMode: 'random',
+        direction: { x: 0, y: 0 }
     }
 ];
 
@@ -69,6 +75,13 @@ function startGame() {
     for (let cat of cats) {
         cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
         cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+        
+        // ランダムな方向を設定
+        if (cat.moveMode === 'random') {
+            const angle = random(TWO_PI);
+            cat.direction.x = cos(angle);
+            cat.direction.y = sin(angle);
+        }
     }
     
     // ネズミの位置をネコから離れた位置に設定
@@ -308,17 +321,31 @@ function drawMouse() {
 }
 
 function updateCatPosition(cat) {
-    // ネズミと猫の距離を計算
-    let dx = mouse.x - cat.x;
-    let dy = mouse.y - cat.y;
-    let distance = sqrt(dx * dx + dy * dy);
-    
     let wasMoving = cat.isMoving;
     cat.isMoving = true;
-    
-    // ネズミの方向に移動
-    cat.x += (dx / distance) * cat.speed;
-    cat.y += (dy / distance) * cat.speed;
+
+    if (cat.moveMode === 'chase') {
+        // ネズミと猫の距離を計算
+        let dx = mouse.x - cat.x;
+        let dy = mouse.y - cat.y;
+        let distance = sqrt(dx * dx + dy * dy);
+        
+        // ネズミの方向に移動
+        cat.x += (dx / distance) * cat.speed;
+        cat.y += (dy / distance) * cat.speed;
+    } else {
+        // ランダムな方向に移動
+        cat.x += cat.direction.x * cat.speed;
+        cat.y += cat.direction.y * cat.speed;
+
+        // 壁に当たったら反射
+        if (cat.x <= 30 + cat.size/2 || cat.x >= width - 30 - cat.size/2) {
+            cat.direction.x *= -1;
+        }
+        if (cat.y <= 30 + cat.size/2 || cat.y >= height - 30 - cat.size/2) {
+            cat.direction.y *= -1;
+        }
+    }
     
     // 画面外に出ないように制限(ステージの枠内に収める)
     cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
