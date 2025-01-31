@@ -46,6 +46,12 @@ let score = 0;
 let bestScore = 0;
 let isGameStarted = false;
 let startButton;
+let directionButtons = {
+    up: null,
+    down: null,
+    left: null,
+    right: null
+};
 
 // キーの状態を保持する変数
 let keys = {
@@ -61,6 +67,15 @@ function setup() {
     
     startButton = select('#startButton');
     startButton.mousePressed(startGame);
+
+    // 方向ボタンの設定
+    directionButtons.up = select('#upButton');
+    directionButtons.down = select('#downButton');
+    directionButtons.left = select('#leftButton');
+    directionButtons.right = select('#rightButton');
+
+    // タッチイベントの設定
+    setupDirectionButtons();
     
     resetGame();
 }
@@ -424,6 +439,43 @@ function mousePressed() {
         if (isGameOver) {
             resetGame();
         }
+    }
+}
+
+function setupDirectionButtons() {
+    // ボタンを押したときの処理
+    function handleButtonPress(key) {
+        keys[key] = true;
+    }
+
+    // ボタンを離したときの処理
+    function handleButtonRelease(key) {
+        keys[key] = false;
+    }
+
+    // マウス/タッチイベントの設定
+    for (let direction in directionButtons) {
+        let button = directionButtons[direction];
+        
+        // mousedown/touchstartイベント
+        button.mousePressed(() => handleButtonPress(direction));
+        button.elt.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleButtonPress(direction);
+        });
+
+        // mouseup/touchendイベント
+        button.mouseReleased(() => handleButtonRelease(direction));
+        button.elt.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleButtonRelease(direction);
+        });
+
+        // タッチデバイスでボタンの外に指が移動した場合
+        button.elt.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            handleButtonRelease(direction);
+        });
     }
 }
 
