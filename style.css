@@ -91,4 +91,18 @@ canvas {
     .direction-button:hover {
         background-color: #357abd;
     }
+
+    .keyboard-message {
+        text-align: center;
+        color: #666;
+        margin: 0 0 10px 0;
+        font-size: 14px;
+    }
+}
+
+/* モバイルデバイスでは非表示 */
+@media (hover: none) {
+    .keyboard-message {
+        display: none;
+    }
 }
