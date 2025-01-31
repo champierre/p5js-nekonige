@@ -56,16 +56,16 @@ canvas {
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     margin-top: 10px;
 }
 
 /* タッチデバイスでのみ表示 */
-@media (hover: none) {
+/* @media (hover: none) { */
     .direction-buttons {
         display: flex;
     }
-}
+/* } */
 
 .horizontal-buttons {
     display: flex;
