@@ -62,7 +62,7 @@ let keys = {
 };
 
 function setup() {
-    const canvas = createCanvas(400, 650);
+    const canvas = createCanvas(400, 400);
     canvas.parent('main');
     
     startButton = select('#startButton');
@@ -130,46 +130,46 @@ function drawArrowKeys() {
     
     // 上矢印
     beginShape();
-    vertex(50, 520);
-    vertex(70, 500);
-    vertex(90, 520);
-    vertex(80, 520);
-    vertex(80, 540);
-    vertex(60, 540);
-    vertex(60, 520);
+    vertex(50, 320);
+    vertex(70, 300);
+    vertex(90, 320);
+    vertex(80, 320);
+    vertex(80, 340);
+    vertex(60, 340);
+    vertex(60, 320);
     endShape(CLOSE);
     
     // 左矢印
     beginShape();
-    vertex(20, 550);
-    vertex(40, 530);
-    vertex(40, 540);
-    vertex(60, 540);
-    vertex(60, 560);
-    vertex(40, 560);
-    vertex(40, 570);
+    vertex(20, 350);
+    vertex(40, 330);
+    vertex(40, 340);
+    vertex(60, 340);
+    vertex(60, 360);
+    vertex(40, 360);
+    vertex(40, 370);
     endShape(CLOSE);
     
     // 下矢印
     beginShape();
-    vertex(50, 580);
-    vertex(70, 600);
-    vertex(90, 580);
-    vertex(80, 580);
-    vertex(80, 560);
-    vertex(60, 560);
-    vertex(60, 580);
+    vertex(50, 380);
+    vertex(70, 360);
+    vertex(90, 380);
+    vertex(80, 380);
+    vertex(80, 360);
+    vertex(60, 360);
+    vertex(60, 380);
     endShape(CLOSE);
     
     // 右矢印
     beginShape();
-    vertex(120, 550);
-    vertex(100, 530);
-    vertex(100, 540);
-    vertex(80, 540);
-    vertex(80, 560);
-    vertex(100, 560);
-    vertex(100, 570);
+    vertex(120, 350);
+    vertex(100, 330);
+    vertex(100, 340);
+    vertex(80, 340);
+    vertex(80, 360);
+    vertex(100, 360);
+    vertex(100, 370);
     endShape(CLOSE);
     pop();
 }
