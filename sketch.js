@@ -19,6 +19,14 @@ let bestScore = 0;
 let isGameStarted = false;
 let startButton;
 
+// キーの状態を保持する変数
+let keys = {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+};
+
 function setup() {
     const canvas = createCanvas(400, 400);
     canvas.parent('main');
@@ -62,23 +70,24 @@ function draw() {
         // ゲーム中
         score = floor((millis() - gameStartTime) / 1000);
         
-        // キー入力の処理
+        // キーの状態に基づいて移動処理
         if (isGameStarted && !isGameOver) {
-            if (keyIsPressed) {
-                if (keyCode === LEFT_ARROW) {
-                    mouse.x -= mouse.speed;
-                } else if (keyCode === RIGHT_ARROW) {
-                    mouse.x += mouse.speed;
-                } else if (keyCode === UP_ARROW) {
-                    mouse.y -= mouse.speed;
-                } else if (keyCode === DOWN_ARROW) {
-                    mouse.y += mouse.speed;
-                }
-                
-                // 画面外に出ないように制限
-                mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
-                mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
+            if (keys.left) {
+                mouse.x -= mouse.speed;
             }
+            if (keys.right) {
+                mouse.x += mouse.speed;
+            }
+            if (keys.up) {
+                mouse.y -= mouse.speed;
+            }
+            if (keys.down) {
+                mouse.y += mouse.speed;
+            }
+            
+            // 画面外に出ないように制限
+            mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
+            mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
         }
         
         updateCatPosition();
@@ -189,6 +198,32 @@ function displayScore() {
     textSize(20);
     textAlign(LEFT, TOP);
     text('時間: ' + score + '秒', 10, 10);
+}
+
+// キーが押されたときの処理
+function keyPressed() {
+    if (keyCode === LEFT_ARROW) {
+        keys.left = true;
+    } else if (keyCode === RIGHT_ARROW) {
+        keys.right = true;
+    } else if (keyCode === UP_ARROW) {
+        keys.up = true;
+    } else if (keyCode === DOWN_ARROW) {
+        keys.down = true;
+    }
+}
+
+// キーが離されたときの処理
+function keyReleased() {
+    if (keyCode === LEFT_ARROW) {
+        keys.left = false;
+    } else if (keyCode === RIGHT_ARROW) {
+        keys.right = false;
+    } else if (keyCode === UP_ARROW) {
+        keys.up = false;
+    } else if (keyCode === DOWN_ARROW) {
+        keys.down = false;
+    }
 }
 
 function displayGameOver() {
