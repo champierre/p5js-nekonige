@@ -2,14 +2,18 @@ let cat = {
     x: 200,
     y: 200,
     size: 50,
-    speed: 3
+    speed: 2,
+    isMoving: false,
+    animationFrame: 0
 };
 
 let mouse = {
     x: 100,
     y: 100,
     size: 40,
-    speed: 4
+    speed: 4,
+    isMoving: false,
+    animationFrame: 0
 };
 
 let gameStartTime = 0;
@@ -38,9 +42,20 @@ function setup() {
 }
 
 function startGame() {
+    resetGame();
     isGameStarted = true;
     gameStartTime = millis();
     startButton.attribute('disabled', '');
+    
+    // ネコとネズミの位置をランダムに設定
+    cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+    
+    // ネズミの位置をネコから離れた位置に設定
+    do {
+        mouse.x = random(30 + mouse.size/2, width - 30 - mouse.size/2);
+        mouse.y = random(30 + mouse.size/2, height - 30 - mouse.size/2);
+    } while (dist(cat.x, cat.y, mouse.x, mouse.y) < 150); // 最低150ピクセル離す
 }
 
 function resetGame() {
@@ -58,6 +73,12 @@ function draw() {
     background(240);
     drawStage();
     
+    // アニメーションフレームの更新
+    if (frameCount % 10 === 0) {  // 10フレームごとに更新
+        if (cat.isMoving) cat.animationFrame = (cat.animationFrame + 1) % 2;
+        if (mouse.isMoving) mouse.animationFrame = (mouse.animationFrame + 1) % 2;
+    }
+    
     if (!isGameStarted) {
         // ゲーム開始前の表示
         drawCat();
@@ -71,18 +92,25 @@ function draw() {
         score = floor((millis() - gameStartTime) / 1000);
         
         // キーの状態に基づいて移動処理
+        let wasMoving = mouse.isMoving;
+        mouse.isMoving = false;
+        
         if (isGameStarted && !isGameOver) {
             if (keys.left) {
                 mouse.x -= mouse.speed;
+                mouse.isMoving = true;
             }
             if (keys.right) {
                 mouse.x += mouse.speed;
+                mouse.isMoving = true;
             }
             if (keys.up) {
                 mouse.y -= mouse.speed;
+                mouse.isMoving = true;
             }
             if (keys.down) {
                 mouse.y += mouse.speed;
+                mouse.isMoving = true;
             }
             
             // 画面外に出ないように制限
@@ -101,23 +129,6 @@ function draw() {
     }
 }
 
-function updateCatPosition() {
-    // ネズミと猫の距離を計算
-    let dx = mouse.x - cat.x;
-    let dy = mouse.y - cat.y;
-    let distance = sqrt(dx * dx + dy * dy);
-    
-    if (distance < 150) {  // ネズミが近づいたら逃げる
-        // ネズミの反対方向に移動
-        cat.x -= (dx / distance) * cat.speed;
-        cat.y -= (dy / distance) * cat.speed;
-    }
-    
-    // 画面外に出ないように制限(ステージの枠内に収める)
-    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
-    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
-}
-
 function drawCat() {
     push();
     translate(cat.x, cat.y);
@@ -128,17 +139,64 @@ function drawCat() {
     circle(0, 0, cat.size);
     
     // 耳
-    triangle(-25, -12, -15, -25, -5, -12);
-    triangle(25, -12, 15, -25, 5, -12);
+    if (cat.isMoving) {
+        if (cat.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            triangle(-25, -8, -15, -18, -5, -8);
+            triangle(25, -8, 15, -18, 5, -8);
+        } else {
+            // 動いているとき(フレーム2)
+            triangle(-25, -12, -15, -22, -5, -12);
+            triangle(25, -12, 15, -22, 5, -12);
+        }
+    } else {
+        // 止まっているとき
+        triangle(-25, -12, -15, -25, -5, -12);
+        triangle(25, -12, 15, -25, 5, -12);
+    }
     
     // 目
     fill(0);
-    circle(-7, -2, 5);
-    circle(7, -2, 5);
+    if (cat.isMoving) {
+        if (cat.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            ellipse(-7, -2, 5, 3);
+            ellipse(7, -2, 5, 3);
+        } else {
+            // 動いているとき(フレーム2)
+            ellipse(-7, -2, 5, 1);
+            ellipse(7, -2, 5, 1);
+        }
+    } else {
+        // 止まっているとき
+        circle(-7, -2, 5);
+        circle(7, -2, 5);
+    }
     
     // 鼻
     fill(255, 105, 180);
     circle(0, 3, 3);
+    
+    // ヒゲ(動きに応じて角度を変える)
+    stroke(100);
+    strokeWeight(1);
+    if (cat.isMoving) {
+        // 動いているときはヒゲを後ろに流す
+        line(-2, 3, -15, 6);
+        line(-2, 3, -15, 8);
+        line(-2, 3, -15, 10);
+        line(2, 3, 15, 6);
+        line(2, 3, 15, 8);
+        line(2, 3, 15, 10);
+    } else {
+        // 止まっているときは通常のヒゲ
+        line(-2, 3, -15, 0);
+        line(-2, 3, -15, 3);
+        line(-2, 3, -15, 6);
+        line(2, 3, 15, 0);
+        line(2, 3, 15, 3);
+        line(2, 3, 15, 6);
+    }
     
     pop();
 }
@@ -154,13 +212,39 @@ function drawMouse() {
     
     // 耳
     fill(200);
-    ellipse(-15, -15, 15, 15);
-    ellipse(15, -15, 15, 15);
+    if (mouse.isMoving) {
+        if (mouse.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            ellipse(-15, -10, 15, 10);
+            ellipse(15, -10, 15, 10);
+        } else {
+            // 動いているとき(フレーム2)
+            ellipse(-15, -14, 15, 14);
+            ellipse(15, -14, 15, 14);
+        }
+    } else {
+        // 止まっているとき
+        ellipse(-15, -15, 15, 15);
+        ellipse(15, -15, 15, 15);
+    }
     
     // 目
     fill(0);
-    circle(-5, -5, 4);
-    circle(5, -5, 4);
+    if (mouse.isMoving) {
+        if (mouse.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            ellipse(-5, -5, 4, 3);
+            ellipse(5, -5, 4, 3);
+        } else {
+            // 動いているとき(フレーム2)
+            ellipse(-5, -5, 4, 1);
+            ellipse(5, -5, 4, 1);
+        }
+    } else {
+        // 止まっているとき
+        circle(-5, -5, 4);
+        circle(5, -5, 4);
+    }
     
     // 鼻
     fill(255, 192, 203);
@@ -169,17 +253,43 @@ function drawMouse() {
     // ヒゲ
     stroke(100);
     strokeWeight(1);
-    // 左側のヒゲ
-    line(-2, 0, -15, -5);
-    line(-2, 0, -15, 0);
-    line(-2, 0, -15, 5);
-    // 右側のヒゲ
-    line(2, 0, 15, -5);
-    line(2, 0, 15, 0);
-    line(2, 0, 15, 5);
-
+    if (mouse.isMoving) {
+        // 動いているときはヒゲを後ろに流す
+        line(-2, 0, -15, -3);
+        line(-2, 0, -15, 2);
+        line(-2, 0, -15, 7);
+        line(2, 0, 15, -3);
+        line(2, 0, 15, 2);
+        line(2, 0, 15, 7);
+    } else {
+        // 止まっているときは通常のヒゲ
+        line(-2, 0, -15, -5);
+        line(-2, 0, -15, 0);
+        line(-2, 0, -15, 5);
+        line(2, 0, 15, -5);
+        line(2, 0, 15, 0);
+        line(2, 0, 15, 5);
+    }
     
     pop();
+}
+
+function updateCatPosition() {
+    // ネズミと猫の距離を計算
+    let dx = mouse.x - cat.x;
+    let dy = mouse.y - cat.y;
+    let distance = sqrt(dx * dx + dy * dy);
+    
+    let wasMoving = cat.isMoving;
+    cat.isMoving = true;
+    
+    // ネズミの方向に移動
+    cat.x += (dx / distance) * cat.speed;
+    cat.y += (dy / distance) * cat.speed;
+    
+    // 画面外に出ないように制限(ステージの枠内に収める)
+    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
 
 function checkCollision() {
@@ -227,7 +337,9 @@ function keyReleased() {
 }
 
 function displayGameOver() {
-    background(240, 240, 240, 200);
+    push();
+    fill(240, 240, 240, 200);
+    rect(0, 0, width, height);
     
     fill(0);
     textSize(32);
@@ -239,6 +351,7 @@ function displayGameOver() {
     
     textSize(16);
     text('スタートボタンでリスタート', width/2, height/2 + 70);
+    pop();
 }
 
 function mousePressed() {
