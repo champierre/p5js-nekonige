@@ -102,20 +102,20 @@ function draw() {
 }
 
 function updateCatPosition() {
-    // マウスと猫の距離を計算
-    let dx = mouseX - cat.x;
-    let dy = mouseY - cat.y;
+    // ネズミと猫の距離を計算
+    let dx = mouse.x - cat.x;
+    let dy = mouse.y - cat.y;
     let distance = sqrt(dx * dx + dy * dy);
     
-    if (distance < 150) {  // マウスが近づいたら逃げる
-        // マウスの反対方向に移動
+    if (distance < 150) {  // ネズミが近づいたら逃げる
+        // ネズミの反対方向に移動
         cat.x -= (dx / distance) * cat.speed;
         cat.y -= (dy / distance) * cat.speed;
     }
     
-    // 画面外に出ないように制限
-    cat.x = constrain(cat.x, cat.size/2, width - cat.size/2);
-    cat.y = constrain(cat.y, cat.size/2, height - cat.size/2);
+    // 画面外に出ないように制限(ステージの枠内に収める)
+    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
 
 function drawCat() {
@@ -183,8 +183,8 @@ function drawMouse() {
 }
 
 function checkCollision() {
-    let distance = dist(mouseX, mouseY, cat.x, cat.y);
-    if (distance < cat.size/2) {
+    let distance = dist(mouse.x, mouse.y, cat.x, cat.y);
+    if (distance < (cat.size + mouse.size) / 3) {
         isGameOver = true;
         if (score > bestScore) {
             bestScore = score;
@@ -197,7 +197,7 @@ function displayScore() {
     fill(0);
     textSize(20);
     textAlign(LEFT, TOP);
-    text('時間: ' + score + '秒', 10, 10);
+    text('時間: ' + score + '秒', 30, 30);
 }
 
 // キーが押されたときの処理
@@ -268,58 +268,5 @@ function drawStage() {
     line(10, height - 30, 30, height - 10);
     // 右下
     line(width - 30, height - 10, width - 10, height - 30);
-    pop();
-}
-
-function updateCatPosition() {
-    // ネズミと猫の距離を計算
-    let dx = mouse.x - cat.x;
-    let dy = mouse.y - cat.y;
-    let distance = sqrt(dx * dx + dy * dy);
-    
-    if (distance < 150) {  // ネズミが近づいたら逃げる
-        // ネズミの反対方向に移動
-        cat.x -= (dx / distance) * cat.speed;
-        cat.y -= (dy / distance) * cat.speed;
-    }
-    
-    // 画面外に出ないように制限（ステージの枠内に収める）
-    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
-    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
-}
-
-function checkCollision() {
-    let distance = dist(mouse.x, mouse.y, cat.x, cat.y);
-    if (distance < (cat.size + mouse.size) / 3) {
-        isGameOver = true;
-        if (score > bestScore) {
-            bestScore = score;
-        }
-        startButton.removeAttribute('disabled');
-    }
-}
-
-function displayScore() {
-    fill(0);
-    textSize(20);
-    textAlign(LEFT, TOP);
-    text('時間: ' + score + '秒', 30, 30);
-}
-
-function displayGameOver() {
-    push();
-    fill(240, 240, 240, 200);
-    rect(0, 0, width, height);
-    
-    fill(0);
-    textSize(32);
-    textAlign(CENTER, CENTER);
-    text('ゲームオーバー!', width/2, height/2 - 40);
-    textSize(24);
-    text('スコア: ' + score + '秒', width/2, height/2);
-    text('ベストスコア: ' + bestScore + '秒', width/2, height/2 + 30);
-    
-    textSize(16);
-    text('スタートボタンでリスタート', width/2, height/2 + 70);
     pop();
 }
