@@ -141,10 +141,6 @@ function draw() {
             drawCat(cat);
         }
         drawMouse();
-        fill(0);
-        textSize(24);
-        textAlign(CENTER, CENTER);
-        text('スタートボタンを押してください', width/2, height/2 - 100);
     } else if (!isGameOver) {
         // ゲーム中
         score = floor((millis() - gameStartTime) / 1000);
