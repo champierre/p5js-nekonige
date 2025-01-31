@@ -84,7 +84,7 @@ function startGame() {
     resetGame();
     isGameStarted = true;
     gameStartTime = millis();
-    startButton.attribute('disabled', '');
+    startButton.addClass('hidden');
     
     // ネコとネズミの位置をランダムに設定
     for (let cat of cats) {
@@ -120,7 +120,7 @@ function resetGame() {
     isGameStarted = false;
     isGameOver = false;
     score = 0;
-    startButton.removeAttribute('disabled');
+    startButton.removeClass('hidden');
 }
 
 function draw() {
@@ -141,10 +141,6 @@ function draw() {
             drawCat(cat);
         }
         drawMouse();
-        fill(0);
-        textSize(24);
-        textAlign(CENTER, CENTER);
-        text('スタートボタンを押してください', width/2, height/2 - 100);
     } else if (!isGameOver) {
         // ゲーム中
         score = floor((millis() - gameStartTime) / 1000);
@@ -376,7 +372,7 @@ function checkCollision() {
             if (score > bestScore) {
                 bestScore = score;
             }
-            startButton.removeAttribute('disabled');
+            startButton.removeClass('hidden');
             return;
         }
     }
@@ -427,9 +423,6 @@ function displayGameOver() {
     textSize(24);
     text('スコア: ' + score + '秒', width/2, height/2);
     text('ベストスコア: ' + bestScore + '秒', width/2, height/2 + 30);
-    
-    textSize(16);
-    text('スタートボタンでリスタート', width/2, height/2 + 70);
     pop();
 }
 
