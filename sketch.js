@@ -46,24 +46,6 @@ function resetGame() {
     startButton.removeAttribute('disabled');
 }
 
-function keyPressed() {
-    if (!isGameStarted || isGameOver) return;
-    
-    if (keyCode === LEFT_ARROW) {
-        mouse.x -= mouse.speed;
-    } else if (keyCode === RIGHT_ARROW) {
-        mouse.x += mouse.speed;
-    } else if (keyCode === UP_ARROW) {
-        mouse.y -= mouse.speed;
-    } else if (keyCode === DOWN_ARROW) {
-        mouse.y += mouse.speed;
-    }
-    
-    // 画面外に出ないように制限
-    mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
-    mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
-}
-
 function draw() {
     background(240);
     drawStage();
@@ -79,6 +61,26 @@ function draw() {
     } else if (!isGameOver) {
         // ゲーム中
         score = floor((millis() - gameStartTime) / 1000);
+        
+        // キー入力の処理
+        if (isGameStarted && !isGameOver) {
+            if (keyIsPressed) {
+                if (keyCode === LEFT_ARROW) {
+                    mouse.x -= mouse.speed;
+                } else if (keyCode === RIGHT_ARROW) {
+                    mouse.x += mouse.speed;
+                } else if (keyCode === UP_ARROW) {
+                    mouse.y -= mouse.speed;
+                } else if (keyCode === DOWN_ARROW) {
+                    mouse.y += mouse.speed;
+                }
+                
+                // 画面外に出ないように制限
+                mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
+                mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
+            }
+        }
+        
         updateCatPosition();
         drawCat();
         drawMouse();
