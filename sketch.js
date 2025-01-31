@@ -62,7 +62,7 @@ let keys = {
 };
 
 function setup() {
-    const canvas = createCanvas(400, 400);
+    const canvas = createCanvas(400, 650);
     canvas.parent('main');
     
     startButton = select('#startButton');
@@ -123,6 +123,57 @@ function resetGame() {
     startButton.removeClass('hidden');
 }
 
+function drawArrowKeys() {
+    push();
+    noStroke();
+    fill(0, 0, 0, 100); // 半透明の黒色
+    
+    // 上矢印
+    beginShape();
+    vertex(50, 520);
+    vertex(70, 500);
+    vertex(90, 520);
+    vertex(80, 520);
+    vertex(80, 540);
+    vertex(60, 540);
+    vertex(60, 520);
+    endShape(CLOSE);
+    
+    // 左矢印
+    beginShape();
+    vertex(20, 550);
+    vertex(40, 530);
+    vertex(40, 540);
+    vertex(60, 540);
+    vertex(60, 560);
+    vertex(40, 560);
+    vertex(40, 570);
+    endShape(CLOSE);
+    
+    // 下矢印
+    beginShape();
+    vertex(50, 580);
+    vertex(70, 600);
+    vertex(90, 580);
+    vertex(80, 580);
+    vertex(80, 560);
+    vertex(60, 560);
+    vertex(60, 580);
+    endShape(CLOSE);
+    
+    // 右矢印
+    beginShape();
+    vertex(120, 550);
+    vertex(100, 530);
+    vertex(100, 540);
+    vertex(80, 540);
+    vertex(80, 560);
+    vertex(100, 560);
+    vertex(100, 570);
+    endShape(CLOSE);
+    pop();
+}
+
 function draw() {
     background(240);
     drawStage();
@@ -180,6 +231,9 @@ function draw() {
         drawMouse();
         checkCollision();
         displayScore();
+        
+        // ゲーム中のみ矢印キーを表示
+        drawArrowKeys();
     } else {
         // ゲームオーバー時
         displayGameOver();
