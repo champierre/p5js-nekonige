@@ -123,57 +123,6 @@ function resetGame() {
     startButton.removeClass('hidden');
 }
 
-function drawArrowKeys() {
-    push();
-    noStroke();
-    fill(0, 0, 0, 100); // 半透明の黒色
-    
-    // 上矢印
-    beginShape();
-    vertex(50, 320);
-    vertex(70, 300);
-    vertex(90, 320);
-    vertex(80, 320);
-    vertex(80, 340);
-    vertex(60, 340);
-    vertex(60, 320);
-    endShape(CLOSE);
-    
-    // 左矢印
-    beginShape();
-    vertex(20, 350);
-    vertex(40, 330);
-    vertex(40, 340);
-    vertex(60, 340);
-    vertex(60, 360);
-    vertex(40, 360);
-    vertex(40, 370);
-    endShape(CLOSE);
-    
-    // 下矢印
-    beginShape();
-    vertex(50, 380);
-    vertex(70, 360);
-    vertex(90, 380);
-    vertex(80, 380);
-    vertex(80, 360);
-    vertex(60, 360);
-    vertex(60, 380);
-    endShape(CLOSE);
-    
-    // 右矢印
-    beginShape();
-    vertex(120, 350);
-    vertex(100, 330);
-    vertex(100, 340);
-    vertex(80, 340);
-    vertex(80, 360);
-    vertex(100, 360);
-    vertex(100, 370);
-    endShape(CLOSE);
-    pop();
-}
-
 function draw() {
     background(240);
     drawStage();
@@ -231,9 +180,6 @@ function draw() {
         drawMouse();
         checkCollision();
         displayScore();
-        
-        // ゲーム中のみ矢印キーを表示
-        drawArrowKeys();
     } else {
         // ゲームオーバー時
         displayGameOver();
@@ -485,37 +431,8 @@ function mousePressed() {
     if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
         if (isGameOver) {
             resetGame();
-        } else if (isGameStarted) {
-            // ステージを4つのエリアに分割してタップ位置を判定
-            const centerX = width / 2;
-            const centerY = height / 2;
-            
-            // 全てのキーをリセット
-            keys.up = false;
-            keys.down = false;
-            keys.left = false;
-            keys.right = false;
-            
-            // タップ位置に応じてキーの状態を更新
-            if (mouseY < centerY - 50) {
-                keys.up = true;
-            } else if (mouseY > centerY + 50) {
-                keys.down = true;
-            } else if (mouseX < centerX - 50) {
-                keys.left = true;
-            } else if (mouseX > centerX + 50) {
-                keys.right = true;
-            }
         }
     }
-}
-
-function mouseReleased() {
-    // タップ終了時に全てのキーをリセット
-    keys.up = false;
-    keys.down = false;
-    keys.left = false;
-    keys.right = false;
 }
 
 function setupDirectionButtons() {
