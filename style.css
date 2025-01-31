@@ -27,7 +27,7 @@ canvas {
 .start-button {
     padding: 10px 30px;
     font-size: 18px;
-    background-color: #4CAF50;
+    background-color: #4a90e2;
     color: white;
     border: none;
     border-radius: 5px;
@@ -36,7 +36,7 @@ canvas {
 }
 
 .start-button:hover {
-    background-color: #45a049;
+    background-color: #357abd;
 }
 
 .start-button:disabled {
@@ -61,7 +61,7 @@ canvas {
     width: 50px;
     height: 50px;
     font-size: 24px;
-    background-color: #4CAF50;
+    background-color: #4a90e2;
     color: white;
     border: none;
     border-radius: 8px;
@@ -76,11 +76,11 @@ canvas {
 }
 
 .direction-button:active {
-    background-color: #45a049;
+    background-color: #357abd;
 }
 
 @media (hover: hover) {
     .direction-button:hover {
-        background-color: #45a049;
+        background-color: #357abd;
     }
 }
