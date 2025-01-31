@@ -3,7 +3,8 @@ let cat = {
     y: 200,
     size: 50,
     speed: 2,
-    isMoving: false
+    isMoving: false,
+    animationFrame: 0
 };
 
 let mouse = {
@@ -11,7 +12,8 @@ let mouse = {
     y: 100,
     size: 40,
     speed: 4,
-    isMoving: false
+    isMoving: false,
+    animationFrame: 0
 };
 
 let gameStartTime = 0;
@@ -85,6 +87,12 @@ function draw() {
     background(240);
     drawStage();
     
+    // アニメーションフレームの更新
+    if (frameCount % 10 === 0) {  // 10フレームごとに更新
+        if (cat.isMoving) cat.animationFrame = (cat.animationFrame + 1) % 2;
+        if (mouse.isMoving) mouse.animationFrame = (mouse.animationFrame + 1) % 2;
+    }
+    
     if (!isGameStarted) {
         // ゲーム開始前の表示
         drawCat();
@@ -138,11 +146,17 @@ function drawCat() {
     
     // 耳
     if (cat.isMoving) {
-        // 動いているときは耳を後ろに倒す
-        triangle(-25, -10, -15, -20, -5, -10);
-        triangle(25, -10, 15, -20, 5, -10);
+        if (cat.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            triangle(-25, -8, -15, -18, -5, -8);
+            triangle(25, -8, 15, -18, 5, -8);
+        } else {
+            // 動いているとき(フレーム2)
+            triangle(-25, -12, -15, -22, -5, -12);
+            triangle(25, -12, 15, -22, 5, -12);
+        }
     } else {
-        // 止まっているときは耳を立てる
+        // 止まっているとき
         triangle(-25, -12, -15, -25, -5, -12);
         triangle(25, -12, 15, -25, 5, -12);
     }
@@ -150,11 +164,17 @@ function drawCat() {
     // 目
     fill(0);
     if (cat.isMoving) {
-        // 動いているときは目を細める
-        ellipse(-7, -2, 5, 2);
-        ellipse(7, -2, 5, 2);
+        if (cat.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            ellipse(-7, -2, 5, 3);
+            ellipse(7, -2, 5, 3);
+        } else {
+            // 動いているとき(フレーム2)
+            ellipse(-7, -2, 5, 1);
+            ellipse(7, -2, 5, 1);
+        }
     } else {
-        // 止まっているときは丸い目
+        // 止まっているとき
         circle(-7, -2, 5);
         circle(7, -2, 5);
     }
@@ -199,11 +219,17 @@ function drawMouse() {
     // 耳
     fill(200);
     if (mouse.isMoving) {
-        // 動いているときは耳を少し後ろに倒す
-        ellipse(-15, -12, 15, 12);
-        ellipse(15, -12, 15, 12);
+        if (mouse.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            ellipse(-15, -10, 15, 10);
+            ellipse(15, -10, 15, 10);
+        } else {
+            // 動いているとき(フレーム2)
+            ellipse(-15, -14, 15, 14);
+            ellipse(15, -14, 15, 14);
+        }
     } else {
-        // 止まっているときは耳を立てる
+        // 止まっているとき
         ellipse(-15, -15, 15, 15);
         ellipse(15, -15, 15, 15);
     }
@@ -211,11 +237,17 @@ function drawMouse() {
     // 目
     fill(0);
     if (mouse.isMoving) {
-        // 動いているときは目を細める
-        ellipse(-5, -5, 4, 2);
-        ellipse(5, -5, 4, 2);
+        if (mouse.animationFrame === 0) {
+            // 動いているとき(フレーム1)
+            ellipse(-5, -5, 4, 3);
+            ellipse(5, -5, 4, 3);
+        } else {
+            // 動いているとき(フレーム2)
+            ellipse(-5, -5, 4, 1);
+            ellipse(5, -5, 4, 1);
+        }
     } else {
-        // 止まっているときは丸い目
+        // 止まっているとき
         circle(-5, -5, 4);
         circle(5, -5, 4);
     }
