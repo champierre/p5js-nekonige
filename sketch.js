@@ -2,7 +2,7 @@ let cat = {
     x: 200,
     y: 200,
     size: 50,
-    speed: 3,
+    speed: 2,
     isMoving: false
 };
 
@@ -35,6 +35,16 @@ function startGame() {
     isGameStarted = true;
     gameStartTime = millis();
     startButton.attribute('disabled', '');
+    
+    // ネコとネズミの位置をランダムに設定
+    cat.x = random(30 + cat.size/2, width - 30 - cat.size/2);
+    cat.y = random(30 + cat.size/2, height - 30 - cat.size/2);
+    
+    // ネズミの位置をネコから離れた位置に設定
+    do {
+        mouse.x = random(30 + mouse.size/2, width - 30 - mouse.size/2);
+        mouse.y = random(30 + mouse.size/2, height - 30 - mouse.size/2);
+    } while (dist(cat.x, cat.y, mouse.x, mouse.y) < 150); // 最低150ピクセル離す
 }
 
 function resetGame() {
@@ -114,27 +124,6 @@ function draw() {
         // ゲームオーバー時
         displayGameOver();
     }
-}
-
-function updateCatPosition() {
-    // ネズミと猫の距離を計算
-    let dx = mouse.x - cat.x;
-    let dy = mouse.y - cat.y;
-    let distance = sqrt(dx * dx + dy * dy);
-    
-    let wasMoving = cat.isMoving;
-    cat.isMoving = false;
-    
-    if (distance < 150) {  // ネズミが近づいたら逃げる
-        // ネズミの反対方向に移動
-        cat.x -= (dx / distance) * cat.speed;
-        cat.y -= (dy / distance) * cat.speed;
-        cat.isMoving = true;
-    }
-    
-    // 画面外に出ないように制限(ステージの枠内に収める)
-    cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
-    cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
 
 function drawCat() {
@@ -258,39 +247,6 @@ function drawMouse() {
     pop();
 }
 
-function checkCollision() {
-    let distance = dist(mouseX, mouseY, cat.x, cat.y);
-    if (distance < cat.size/2) {
-        isGameOver = true;
-        if (score > bestScore) {
-            bestScore = score;
-        }
-        startButton.removeAttribute('disabled');
-    }
-}
-
-function displayScore() {
-    fill(0);
-    textSize(20);
-    textAlign(LEFT, TOP);
-    text('時間: ' + score + '秒', 10, 10);
-}
-
-function displayGameOver() {
-    background(240, 240, 240, 200);
-    
-    fill(0);
-    textSize(32);
-    textAlign(CENTER, CENTER);
-    text('ゲームオーバー!', width/2, height/2 - 40);
-    textSize(24);
-    text('スコア: ' + score + '秒', width/2, height/2);
-    text('ベストスコア: ' + bestScore + '秒', width/2, height/2 + 30);
-    
-    textSize(16);
-    text('スタートボタンでリスタート', width/2, height/2 + 70);
-}
-
 function mousePressed() {
     // キャンバス内のクリックのみを処理
     if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
@@ -327,13 +283,14 @@ function updateCatPosition() {
     let dy = mouse.y - cat.y;
     let distance = sqrt(dx * dx + dy * dy);
     
-    if (distance < 150) {  // ネズミが近づいたら逃げる
-        // ネズミの反対方向に移動
-        cat.x -= (dx / distance) * cat.speed;
-        cat.y -= (dy / distance) * cat.speed;
-    }
+    let wasMoving = cat.isMoving;
+    cat.isMoving = true;
     
-    // 画面外に出ないように制限（ステージの枠内に収める）
+    // ネズミの方向に移動
+    cat.x += (dx / distance) * cat.speed;
+    cat.y += (dy / distance) * cat.speed;
+    
+    // 画面外に出ないように制限(ステージの枠内に収める)
     cat.x = constrain(cat.x, 30 + cat.size/2, width - 30 - cat.size/2);
     cat.y = constrain(cat.y, 30 + cat.size/2, height - 30 - cat.size/2);
 }
