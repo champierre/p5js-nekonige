@@ -485,8 +485,37 @@ function mousePressed() {
     if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
         if (isGameOver) {
             resetGame();
+        } else if (isGameStarted) {
+            // ステージを4つのエリアに分割してタップ位置を判定
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            // 全てのキーをリセット
+            keys.up = false;
+            keys.down = false;
+            keys.left = false;
+            keys.right = false;
+            
+            // タップ位置に応じてキーの状態を更新
+            if (mouseY < centerY - 50) {
+                keys.up = true;
+            } else if (mouseY > centerY + 50) {
+                keys.down = true;
+            } else if (mouseX < centerX - 50) {
+                keys.left = true;
+            } else if (mouseX > centerX + 50) {
+                keys.right = true;
+            }
         }
     }
+}
+
+function mouseReleased() {
+    // タップ終了時に全てのキーをリセット
+    keys.up = false;
+    keys.down = false;
+    keys.left = false;
+    keys.right = false;
 }
 
 function setupDirectionButtons() {
