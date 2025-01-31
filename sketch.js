@@ -23,6 +23,14 @@ let bestScore = 0;
 let isGameStarted = false;
 let startButton;
 
+// キーの状態を保持する変数
+let keys = {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+};
+
 function setup() {
     const canvas = createCanvas(400, 400);
     canvas.parent('main');
@@ -61,28 +69,6 @@ function resetGame() {
     startButton.removeAttribute('disabled');
 }
 
-function keyPressed() {
-    if (!isGameStarted || isGameOver) return;
-    
-    if (keyCode === LEFT_ARROW) {
-        mouse.x -= mouse.speed;
-        mouse.isMoving = !mouse.isMoving;
-    } else if (keyCode === RIGHT_ARROW) {
-        mouse.x += mouse.speed;
-        mouse.isMoving = !mouse.isMoving;
-    } else if (keyCode === UP_ARROW) {
-        mouse.y -= mouse.speed;
-        mouse.isMoving = !mouse.isMoving;
-    } else if (keyCode === DOWN_ARROW) {
-        mouse.y += mouse.speed;
-        mouse.isMoving = !mouse.isMoving;
-    }
-    
-    // 画面外に出ないように制限
-    mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
-    mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
-}
-
 function draw() {
     background(240);
     drawStage();
@@ -105,6 +91,32 @@ function draw() {
         // ゲーム中
         score = floor((millis() - gameStartTime) / 1000);
         
+        // キーの状態に基づいて移動処理
+        let wasMoving = mouse.isMoving;
+        mouse.isMoving = false;
+        
+        if (isGameStarted && !isGameOver) {
+            if (keys.left) {
+                mouse.x -= mouse.speed;
+                mouse.isMoving = true;
+            }
+            if (keys.right) {
+                mouse.x += mouse.speed;
+                mouse.isMoving = true;
+            }
+            if (keys.up) {
+                mouse.y -= mouse.speed;
+                mouse.isMoving = true;
+            }
+            if (keys.down) {
+                mouse.y += mouse.speed;
+                mouse.isMoving = true;
+            }
+            
+            // 画面外に出ないように制限
+            mouse.x = constrain(mouse.x, 30 + mouse.size/2, width - 30 - mouse.size/2);
+            mouse.y = constrain(mouse.y, 30 + mouse.size/2, height - 30 - mouse.size/2);
+        }
         
         updateCatPosition();
         drawCat();
@@ -262,36 +274,6 @@ function drawMouse() {
     pop();
 }
 
-function mousePressed() {
-    // キャンバス内のクリックのみを処理
-    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-        if (isGameOver) {
-            resetGame();
-        }
-    }
-}
-
-function drawStage() {
-    // ステージの枠を描画
-    push();
-    strokeWeight(4);
-    stroke(100);
-    noFill();
-    rect(10, 10, width - 20, height - 20);
-    
-    // 角の装飾
-    const cornerSize = 20;
-    // 左上
-    line(10, 30, 30, 10);
-    // 右上
-    line(width - 30, 10, width - 10, 30);
-    // 左下
-    line(10, height - 30, 30, height - 10);
-    // 右下
-    line(width - 30, height - 10, width - 10, height - 30);
-    pop();
-}
-
 function updateCatPosition() {
     // ネズミと猫の距離を計算
     let dx = mouse.x - cat.x;
@@ -328,6 +310,32 @@ function displayScore() {
     text('時間: ' + score + '秒', 30, 30);
 }
 
+// キーが押されたときの処理
+function keyPressed() {
+    if (keyCode === LEFT_ARROW) {
+        keys.left = true;
+    } else if (keyCode === RIGHT_ARROW) {
+        keys.right = true;
+    } else if (keyCode === UP_ARROW) {
+        keys.up = true;
+    } else if (keyCode === DOWN_ARROW) {
+        keys.down = true;
+    }
+}
+
+// キーが離されたときの処理
+function keyReleased() {
+    if (keyCode === LEFT_ARROW) {
+        keys.left = false;
+    } else if (keyCode === RIGHT_ARROW) {
+        keys.right = false;
+    } else if (keyCode === UP_ARROW) {
+        keys.up = false;
+    } else if (keyCode === DOWN_ARROW) {
+        keys.down = false;
+    }
+}
+
 function displayGameOver() {
     push();
     fill(240, 240, 240, 200);
@@ -343,5 +351,35 @@ function displayGameOver() {
     
     textSize(16);
     text('スタートボタンでリスタート', width/2, height/2 + 70);
+    pop();
+}
+
+function mousePressed() {
+    // キャンバス内のクリックのみを処理
+    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+        if (isGameOver) {
+            resetGame();
+        }
+    }
+}
+
+function drawStage() {
+    // ステージの枠を描画
+    push();
+    strokeWeight(4);
+    stroke(100);
+    noFill();
+    rect(10, 10, width - 20, height - 20);
+    
+    // 角の装飾
+    const cornerSize = 20;
+    // 左上
+    line(10, 30, 30, 10);
+    // 右上
+    line(width - 30, 10, width - 10, 30);
+    // 左下
+    line(10, height - 30, 30, height - 10);
+    // 右下
+    line(width - 30, height - 10, width - 10, height - 30);
     pop();
 }
