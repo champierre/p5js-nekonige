@@ -133,7 +133,7 @@ function resetGame() {
 }
 
 function draw() {
-    background(240);
+    background(0, 0, 255); // 青色
     drawStage();
     
     // アニメーションフレームの更新
