@@ -213,7 +213,7 @@ function drawCat(cat) {
     translate(cat.x, cat.y);
     
     // 猫の体
-    fill(255, 255, 0); // 黄色
+    fill(255); // 白
     noStroke();
     circle(0, 0, cat.size);
     
